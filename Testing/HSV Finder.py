@@ -30,6 +30,7 @@ while(1):
     imgTemp = np.array(img)
 
     RGB = cv2.cvtColor(imgTemp, cv2.COLOR_BGR2RGB)
+    gray = cv2.cvtColor(imgTemp, cv2.COLOR_BGR2GRAY)
 
     #converting to HSV
     hsv = cv2.cvtColor(imgTemp, cv2.COLOR_BGR2HSV)
@@ -43,14 +44,20 @@ while(1):
     vh = cv2.getTrackbarPos('(high) v','result')
 
     # Normal masking algorithm
-    lower_blue = np.array([hl,sl,vl])
-    upper_blue = np.array([hh,sh,vh])
+    lower = np.array([hl,sl,vl])
+    upper = np.array([hh,sh,vh])
 
-    mask = cv2.inRange(hsv,lower_blue, upper_blue)
+    HSVmask = cv2.inRange(hsv, lower, upper)
+    RGBmask = cv2.inRange(RGB, lower, upper)
+    # GRAYmask = cv2.inRange(gray, lower, upper)
 
-    result = cv2.bitwise_and(RGB,RGB,mask = mask)
+    RGBResult = cv2.bitwise_and(RGB,RGB,mask = HSVmask)
+    HSVResult = cv2.bitwise_and(hsv,hsv,mask=RGBmask)
+    # GrayResult = cv2.bitwise_and(gray,gray,mask=graymask)
 
-    cv2.imshow('result',result)
+    cv2.imshow('RGB',RGBResult)
+    cv2.imshow('HSV',HSVResult)
+    # cv2.imshow('GRAY',GrayResult)
 
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
