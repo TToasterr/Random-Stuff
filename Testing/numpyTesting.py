@@ -16,7 +16,7 @@ while 1:
     imgTemp = np.array(img)
 
     # lowBlue = np.array([60,30,0])
-    lowBlue = np.array([100,150,0])
+    # lowBlue = np.array([100,150,0])
     highBlue = np.array([180,255,255])
 
     HSV = cv2.cvtColor(imgTemp, cv2.COLOR_BGR2HSV)
