@@ -13,7 +13,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\t
 # -----------------------------------------------------------------------------
 
 center = {'top': 500, 'left': 920, 'width': 80, 'height': 80}
-# toptext = {'top': 140, 'left': 580, 'width': 760, 'height': 320}
+toptext = {'top': 140, 'left': 580, 'width': 760, 'height': 320}
 text = {'top': 460, 'left': 580, 'width': 760, 'height': 160}
 # bottomtext = {'top': 620, 'left': 580, 'width': 760, 'height': 320}
 sct = mss()
@@ -35,9 +35,9 @@ while 1:
     img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
     imgTemp = np.array(img)
 
-    # sct.get_pixels(toptext)
-    # img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
-    # topTextTemp = np.array(img)
+    sct.get_pixels(toptext)
+    img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
+    topTextTemp = np.array(img)
 
     sct.get_pixels(text)
     img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
@@ -48,7 +48,7 @@ while 1:
     # bottomTextTemp = np.array(img)
 
     RGB = cv2.cvtColor(imgTemp, cv2.COLOR_BGR2RGB)
-    # TOPTEXT = cv2.cvtColor(topTextTemp, cv2.COLOR_BGR2GRAY)
+    TOPTEXT = cv2.cvtColor(topTextTemp, cv2.COLOR_BGR2GRAY)
     TEXT = cv2.cvtColor(textTemp, cv2.COLOR_BGR2GRAY)
     # BOTTOMTEXT = cv2.cvtColor(bottomTextTemp, cv2.COLOR_BGR2GRAY)
 
@@ -156,7 +156,7 @@ while 1:
     # -----------------------------------------------------------------------------
 
     cv2.imshow('RGB', RGB)
-    # cv2.imshow('TOPTEXT', TOPTEXT)
+    cv2.imshow('TOPTEXT', TOPTEXT)
     cv2.imshow('TEXT', TEXT)
     # cv2.imshow('BOTTOMTEXT', BOTTOMTEXT)
 
