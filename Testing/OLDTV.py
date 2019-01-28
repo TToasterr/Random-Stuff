@@ -7,12 +7,15 @@ import win32api
 import win32con
 import pytesseract
 import os
+import imutils
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
 
 # -----------------------------------------------------------------------------
 
 center = {'top': 500, 'left': 920, 'width': 80, 'height': 80}
+# toptext = {'top': 140, 'left': 580, 'width': 760, 'height': 320}
 text = {'top': 460, 'left': 580, 'width': 760, 'height': 160}
+# bottomtext = {'top': 620, 'left': 580, 'width': 760, 'height': 320}
 sct = mss()
 
 # -----------------------------------------------------------------------------
@@ -23,6 +26,7 @@ cyan = np.array([185, 164, 0])
 purple = np.array([223, 0, 97])
 yellow = np.array([0, 141, 132])
 green = np.array([0, 255, 0])
+colorArray = ["BLUE", "RED", "CYAN", "PURPLE", "YELLOW", "GREEN"]
 
 # -----------------------------------------------------------------------------
 
@@ -31,14 +35,24 @@ while 1:
     img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
     imgTemp = np.array(img)
 
+    # sct.get_pixels(toptext)
+    # img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
+    # topTextTemp = np.array(img)
+
     sct.get_pixels(text)
     img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
     textTemp = np.array(img)
 
-    RGB = cv2.cvtColor(imgTemp, cv2.COLOR_BGR2RGB)
-    TEXT = cv2.cvtColor(textTemp, cv2.COLOR_BGR2GRAY)
+    # sct.get_pixels(bottomtext)
+    # img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
+    # bottomTextTemp = np.array(img)
 
-    print("\n" * 100)
+    RGB = cv2.cvtColor(imgTemp, cv2.COLOR_BGR2RGB)
+    # TOPTEXT = cv2.cvtColor(topTextTemp, cv2.COLOR_BGR2GRAY)
+    TEXT = cv2.cvtColor(textTemp, cv2.COLOR_BGR2GRAY)
+    # BOTTOMTEXT = cv2.cvtColor(bottomTextTemp, cv2.COLOR_BGR2GRAY)
+
+    print("\n" * 50)
     print(RGB[40,40])
 
     done = False
@@ -77,26 +91,74 @@ while 1:
 
     # -----------------------------------------------------------------------------
 
-    cv2.imshow('RGB', RGB)
-    cv2.imshow('TEXT', TEXT)
-
-    # -----------------------------------------------------------------------------
-
     filename = "text.png"
     cv2.imwrite(filename, TEXT)
+    flipped = False
 
-    colortext = pytesseract.image_to_string(Image.open("H:\\Misc\\Codes\\Random Stuff\\Testing\\%s" % filename), lang="eng")
+    colortext = pytesseract.image_to_string(Image.open("H:\\Misc\\Codes\\Random Stuff\\Testing\\%s" % filename), lang="eng").upper()
     os.remove(filename)
-    print("TEXT - \"%s\"" % colortext.upper())
+
+    # if not (colortext in colorArray) and color != "NONE" and not ("INVERTED" in bottomtext) and not ("DON'T SWITCH" in bottomtext):
+    if not (colortext in colorArray) and color != "NONE":
+        flipped = True
+        TEXT = imutils.rotate(TEXT, 180)
+        TEXT = cv2.flip(TEXT, 1)
+
+        cv2.imwrite(filename, TEXT)
+        colortext = pytesseract.image_to_string(Image.open("H:\\Misc\\Codes\\Random Stuff\\Testing\\%s" % filename), lang="eng").upper()
+        os.remove(filename)
 
     # -----------------------------------------------------------------------------
 
-    if colortext.upper() == color:
+    # filename = "bottomtext.png"
+    # cv2.imwrite(filename, BOTTOMTEXT)
+    #
+    # bottomText = pytesseract.image_to_string(Image.open("H:\\Misc\\Codes\\Random Stuff\\Testing\\%s" % filename), lang="eng").upper()
+    # topText = ""
+    # os.remove(filename)
+
+    # if flipped:
+    #     filename = "toptext.png"
+    #     TOPTEXT = imutils.rotate(TOPTEXT, 180)
+    #     TOPTEXT = cv2.flip(TOPTEXT, 1)
+    #
+    #     cv2.imwrite(filename, TOPTEXT)
+    #     topText = pytesseract.image_to_string(Image.open("H:\\Misc\\Codes\\Random Stuff\\Testing\\%s" % filename), lang="eng").upper()
+    #     os.remove(filename)
+
+    # -----------------------------------------------------------------------------
+
+    # print("TOPTEXT - \"%s\"" % topText)
+    print("COLORTEXT - \"%s\"" % colortext)
+    # print("BOTTOMTEXT - \"%s\"" % bottomText)
+
+    # -----------------------------------------------------------------------------
+
+    if colortext == color:
+        # if "INVERTED" in bottomText:
+        #     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,0,0)
+        #     win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,0,0)
+        # elif "DON'T SWITCH" in bottomText:
+        #     t.sleep(2)
+        # else:
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0)
-    elif color != "NONE" and colortext.upper() in ["BLUE", "RED", "CYAN", "PURPLE", "YELLOW", "GREEN"]:
+    elif color != "NONE" and colortext in colorArray:
+        # if "INVERTED" in bottomText:
+        #     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
+        #     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0)
+        # elif "DON'T SWITCH" in bottomText:
+        #     t.sleep(2)
+        # else:
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,0,0)
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,0,0)
+
+    # -----------------------------------------------------------------------------
+
+    cv2.imshow('RGB', RGB)
+    # cv2.imshow('TOPTEXT', TOPTEXT)
+    cv2.imshow('TEXT', TEXT)
+    # cv2.imshow('BOTTOMTEXT', BOTTOMTEXT)
 
     # -----------------------------------------------------------------------------
 
@@ -104,4 +166,4 @@ while 1:
         cv2.destroyAllWindows()
         break
 
-    t.sleep(0.5)
+    # t.sleep(0.1)
