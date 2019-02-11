@@ -6,11 +6,11 @@ import win32con
 
 # -----------------------------------------------------------------------------
 
-left_or_right = input("Do you use left or right click to place blocks?\n(please enter 'left' or 'right')\n")
+left_or_right = input("Do you use left or right click to place blocks?\n(please enter 'l' or 'r')\n")
 
 # -----------------------------------------------------------------------------
 
-if left_or_right == 'left':
+if left_or_right == 'l':
     mouseDown = win32con.MOUSEEVENTF_LEFTDOWN
     mouseUp = win32con.MOUSEEVENTF_LEFTUP
 else:
@@ -25,14 +25,17 @@ def click(amount, sleepTime):
         win32api.mouse_event(mouseUp,0,0)
         sleep(sleepTime)
 
+def realPrint(message):
+    print('[%s] %s' % (datetime.now().time(), message))
+
 # -----------------------------------------------------------------------------
 
 print('Program Running..')
 
 # -----------------------------------------------------------------------------
 
-add_hotkey('m', lambda: (print('[%s] M was pressed' % datetime.now().time()), click(8, 0)))
-add_hotkey('n', lambda: (print('[%s] N was pressed' % datetime.now().time()), click(10, 0.3)))
+add_hotkey('m', lambda: (realPrint('M was pressed'), click(8, 0)))
+add_hotkey('n', lambda: (realPrint('N was pressed'), click(11, 0.3)))
 
 # -----------------------------------------------------------------------------
 

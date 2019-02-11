@@ -1,0 +1,9 @@
+145 seared brick
+1 glass
+
+145 grout
+
+73 sand
+73 gravel
+14 clay
+
